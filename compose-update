@@ -31,7 +31,7 @@ def update_compose(x):
 
 
 @click.command()
-@click.argument('update_dirs', nargs=-1)
+@click.argument('update_dirs', nargs=-1, required=True)
 def update_composes(update_dirs):
     """
     Update docker-compose images automaticly. 
@@ -47,9 +47,11 @@ def update_composes(update_dirs):
     update_dirs_set = set(update_dirs)
     pool = mp.Pool(mp.cpu_count())
     
+    print(f"Starting update process on '{len(update_dirs_set)}' compose stacks")
     results = pool.map(update_compose, update_dirs_set)
     pool.close()
-
+    print(f"Update process finished on {results.count(0)}/{len(update_dirs_set)} compose stacks")
+    
     print("\nPrune Images?")
     os.system("docker image prune")
 
