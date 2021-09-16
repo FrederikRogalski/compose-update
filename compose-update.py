@@ -33,6 +33,17 @@ def update_compose(x):
 @click.command()
 @click.argument('update_dirs', nargs=-1)
 def update_composes(update_dirs):
+    """
+    Update docker-compose images automaticly. 
+    
+    Takes one or more directorys as input and searches for a compose file in one of the following forms:
+    "compose.yaml",
+    "compose.yml",
+    "docker-compose.yaml",
+    "docker-compose.yml"
+
+    After the images are updated you will be asked if you want to prune your images.
+    """
     update_dirs_set = set(update_dirs)
     pool = mp.Pool(mp.cpu_count())
     
