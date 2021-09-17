@@ -3,6 +3,10 @@ This python script updates the images of one or many docker-compose stacks autom
 
 If multiple docker-compose directories are supplied, the script updates them in parallel.
 
+## Demo
+
+https://user-images.githubusercontent.com/31591562/133807706-5c90e6de-f2fa-4e28-ae7f-7f81c24abc04.mov
+
 ## Usage
 ```
 Usage: update-compose.py [OPTIONS] [UPDATE_DIRS]...
