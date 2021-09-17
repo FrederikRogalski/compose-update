@@ -1,4 +1,4 @@
-# docker-compose-image-updater
+# Docker-compose-image-updater -> compose-update
 This python script updates the images of one or many docker-compose stacks automatically.
 
 If multiple docker-compose directories are supplied, the script updates them in parallel.
