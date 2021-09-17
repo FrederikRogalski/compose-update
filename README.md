@@ -11,7 +11,7 @@ If multiple docker-compose directories are supplied, the script updates them in 
 ```
 Usage: compose-update [OPTIONS] [UPDATE_DIRS]...
 
-  Update docker-compose images automaticly.
+  Update docker-compose images automatically.
 
   Takes one or more directorys as input and searches for a
   compose file in one of the following forms:
@@ -28,7 +28,7 @@ Options:
 ```
 git clone https://github.com/FrederikRogalski/docker-compose-image-updater.git
 cd docker-compose-image-updater
-chmod +x update_compose.py
+chmod +x update-compose
 ```
 
-Then add the file 'update_compose.py' to the your path
+Then add the file 'update-compose' to your path.
