@@ -5,6 +5,15 @@ import tqdm
 import multiprocessing as mp
 import sys
 import select
+import subprocess
+
+with open(os.devnull, 'wb') as devnull:
+    if subprocess.check_call(['docker', 'compose'], stdout=devnull, stderr=subprocess.STDOUT)==0:
+        compose_prefix = "docker compose"
+    elif subprocess.check_call(['docker-compose'], stdout=devnull, stderr=subprocess.STDOUT)==0:
+        compose_prefix = 'docker-compose'
+    else:
+        raise Exception("'docker compose' is not an executable. Please install it.")
 
 compose_names = {"compose.yaml",
                  "compose.yml",
@@ -35,10 +44,10 @@ def get_compose_path(x):
     return os.path.join(x, compose_file.pop())
 
 def pull_images(compose_path):
-    return os.system(f'docker-compose -f {compose_path} pull')
+    return os.system(f'{compose_prefix} -f {compose_path} pull --quiet')
 
 def update_compose(compose_path):
-    return os.system(f'docker-compose -f {compose_path} up -d')
+    return os.system(f'{compose_prefix} -f {compose_path} up -d')
 
 class FilesDefaultToStdin(click.Argument):
     def __init__(self, *args, **kwargs):
