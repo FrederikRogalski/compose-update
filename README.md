@@ -1,4 +1,4 @@
-# docker-compose-image-updater
+# **compose-update** a docker-compose-image-updater
 This python script updates the images of one or many docker-compose stacks automatically.
 
 If multiple docker-compose directories are supplied, the script updates them in parallel.
@@ -11,7 +11,7 @@ If multiple docker-compose directories are supplied, the script updates them in 
 ```
 Usage: compose-update [OPTIONS] [UPDATE_DIRS]...
 
-  Update docker-compose images automaticly.
+  Update docker-compose images automatically.
 
   Takes one or more directorys as input and searches for a
   compose file in one of the following forms:
@@ -26,9 +26,9 @@ Options:
 
 ## Installation
 ```
-git clone https://github.com/FrederikRogalski/docker-compose-image-updater.git
+git clone https://github.com/FrederikRogalski/compose-update.git
 cd docker-compose-image-updater
-chmod +x update_compose.py
+chmod +x update-compose
 ```
 
-Then add the file 'update_compose.py' to the your path
+Then add the file 'update-compose' to your path.
