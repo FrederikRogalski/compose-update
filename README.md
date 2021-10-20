@@ -27,7 +27,7 @@ Options:
 ## Installation
 ```
 git clone https://github.com/FrederikRogalski/compose-update.git
-cd docker-compose-image-updater
+cd compose-update
 chmod +x update-compose
 ```
 
