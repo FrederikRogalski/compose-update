@@ -8,12 +8,15 @@ import select
 import subprocess
 
 with open(os.devnull, 'wb') as devnull:
-    if subprocess.check_call(['docker', 'compose'], stdout=devnull, stderr=subprocess.STDOUT)==0:
-        compose_prefix = "docker compose"
-    elif subprocess.check_call(['docker-compose'], stdout=devnull, stderr=subprocess.STDOUT)==0:
-        compose_prefix = 'docker-compose'
-    else:
-        raise Exception("'docker compose' is not an executable. Please install it.")
+    try:
+        if subprocess.check_call(['docker', 'compose'], stdout=devnull, stderr=subprocess.STDOUT)==0:
+            compose_prefix = "docker compose"
+    except subprocess.CalledProcessError:
+        try:
+            if subprocess.check_call(['docker-compose'], stdout=devnull, stderr=subprocess.STDOUT)==0:
+                compose_prefix = 'docker-compose'
+        except subprocess.CalledProcessError:
+            raise Exception("'docker compose' is not an executable. Please install it.")
 
 compose_names = {"compose.yaml",
                  "compose.yml",
@@ -75,7 +78,14 @@ def update_composes(update_dirs, prune=False):
     
     print(f"Starting update process on '{len(update_dirs_set)}' compose stacks")
     print(color("\nChecking directory paths and searching for compose files."))
-    compose_paths = pool.map(get_compose_path, update_dirs_set)
+    compose_paths = []
+    new_update_dirs_set = []
+    for update_dir in update_dirs_set:
+        try:
+            compose_paths.append(get_compose_path(update_dir))
+            new_update_dirs_set.append(update_dir)
+        except FileNotFoundError:
+            print(f"Directory '{update_dir}' doesn't contain a compose file")
 
     print(color("\nPulling images"))
     results = pool.map(pull_images, compose_paths)
@@ -88,7 +98,7 @@ def update_composes(update_dirs, prune=False):
     results = pool.map(update_compose, filtered_compose_paths)
     pool.close()
     pool.join()
-    print(f"\nUpdate process finished on {results.count(0)}/{len(update_dirs_set)} compose stacks")
+    print(f"\nUpdate process finished on {results.count(0)}/{len(new_update_dirs_set)} compose stacks")
     
     if prune:
         print(color("\nPruning images..."))
