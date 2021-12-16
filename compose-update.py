@@ -1,22 +1,31 @@
-#!/usr/bin/python3
 import os
 import click
-import tqdm
 import multiprocessing as mp
 import sys
 import select
 import subprocess
+import logging
 
-with open(os.devnull, 'wb') as devnull:
-    try:
-        if subprocess.check_call(['docker', 'compose'], stdout=devnull, stderr=subprocess.STDOUT)==0:
-            compose_prefix = "docker compose"
-    except subprocess.CalledProcessError:
+logging.basicConfig(level=logging.INFO)
+
+compose_calls = [['docker', 'compose'],
+                 ['docker-compose']]
+
+# find a matching call for docker compose
+for compose_call in compose_calls:
+    compose_prefix = None
+    with open(os.devnull, 'wb') as devnull:
         try:
-            if subprocess.check_call(['docker-compose'], stdout=devnull, stderr=subprocess.STDOUT)==0:
-                compose_prefix = 'docker-compose'
+            subprocess.check_call(['docker', 'compose'],
+                                  stdout=devnull, stderr=subprocess.STDOUT)
+            compose_prefix = ' '.join(compose_call)
+            break
         except subprocess.CalledProcessError:
-            raise Exception("'docker compose' is not an executable. Please install it.")
+            logging.debug(f"Checked '{compose_call}' it is not an executable")
+if not compose_prefix:
+    raise Exception("Couldn't find a docker compose executable.")
+
+logging.info(f"Using '{compose_prefix}'.")
 
 compose_names = {"compose.yaml",
                  "compose.yml",
@@ -25,13 +34,15 @@ compose_names = {"compose.yaml",
 
 OKGREEN = '\033[92m'
 ENDC = '\033[0m'
-color = lambda x: f"{OKGREEN}{x}{ENDC}" 
+def color(x): return f"{OKGREEN}{x}{ENDC}"
+
 
 def get_stdin():
     stdin = ""
-    if select.select([sys.stdin,],[],[],0.0)[0]:
+    if select.select([sys.stdin, ], [], [], 0.0)[0]:
         stdin = sys.stdin.read().splitlines()
     return stdin
+
 
 def get_compose_path(x):
     # check if dir exist
@@ -40,17 +51,22 @@ def get_compose_path(x):
 
     # check if dir contains compose file
     compose_file = compose_names.intersection(os.listdir(x))
-    if len(compose_file)==0:
-        raise FileNotFoundError(f"Directory '{x}' doesn't contain a compose file in one of the following forms: {compose_names}")
-    if len(compose_file)>1:
-        raise Exception(f"Directory '{x}' contains more then one compose file, namely: {compose_file}")
+    if len(compose_file) == 0:
+        raise FileNotFoundError(
+            f"Directory '{x}' doesn't contain a compose file in one of the following forms: {compose_names}")
+    if len(compose_file) > 1:
+        raise Exception(
+            f"Directory '{x}' contains more then one compose file, namely: {compose_file}")
     return os.path.join(x, compose_file.pop())
+
 
 def pull_images(compose_path):
     return os.system(f'{compose_prefix} -f {compose_path} pull --quiet')
 
+
 def update_compose(compose_path):
     return os.system(f'{compose_prefix} -f {compose_path} up -d')
+
 
 class FilesDefaultToStdin(click.Argument):
     def __init__(self, *args, **kwargs):
@@ -60,13 +76,14 @@ class FilesDefaultToStdin(click.Argument):
     def full_process_value(self, ctx, value):
         return super().process_value(ctx, value or get_stdin())
 
+
 @click.command()
 @click.option('--prune/--no-prune', default=False, help="Prune docker images after update process if set")
 @click.argument('update_dirs', cls=FilesDefaultToStdin)
 def update_composes(update_dirs, prune=False):
     """
     Update docker-compose images automaticly. 
-    
+
     Takes one or more directorys as input and searches for a compose file in one of the following forms:
     "compose.yaml",
     "compose.yml",
@@ -75,9 +92,11 @@ def update_composes(update_dirs, prune=False):
     """
     update_dirs_set = set(update_dirs)
     pool = mp.Pool(mp.cpu_count())
-    
-    print(f"Starting update process on '{len(update_dirs_set)}' compose stacks")
-    print(color("\nChecking directory paths and searching for compose files."))
+
+    logging.info(
+        f"Starting update process on '{len(update_dirs_set)}' compose stacks")
+    logging.info(
+        color("Checking directory paths and searching for compose files."))
     compose_paths = []
     new_update_dirs_set = []
     for update_dir in update_dirs_set:
@@ -85,24 +104,29 @@ def update_composes(update_dirs, prune=False):
             compose_paths.append(get_compose_path(update_dir))
             new_update_dirs_set.append(update_dir)
         except FileNotFoundError:
-            print(f"Directory '{update_dir}' doesn't contain a compose file")
+            logging.info(
+                f"Directory '{update_dir}' doesn't contain a compose file")
 
-    print(color("\nPulling images"))
+    logging.info(color("Pulling images"))
     results = pool.map(pull_images, compose_paths)
 
     # filter compose_paths where pulling finished succesfully
-    finished = [idx for idx, result in enumerate(results) if result==0]
-    filtered_compose_paths = [compose_path for idx, compose_path in enumerate(compose_paths) if idx in finished]
-    
-    print(color("\nRestarting composes"))
+    finished = [idx for idx, result in enumerate(results) if result == 0]
+    filtered_compose_paths = [compose_path for idx, compose_path in enumerate(
+        compose_paths) if idx in finished]
+
+    logging.info(color("Restarting composes"))
     results = pool.map(update_compose, filtered_compose_paths)
     pool.close()
     pool.join()
-    print(f"\nUpdate process finished on {results.count(0)}/{len(new_update_dirs_set)} compose stacks")
-    
+
+    logging.info(
+        f"Update process finished on {results.count(0)}/{len(new_update_dirs_set)} compose stacks")
+
     if prune:
-        print(color("\nPruning images..."))
+        logging.info(color("Pruning images..."))
         os.system(f"docker image prune -f")
+
 
 if __name__ == "__main__":
     update_composes()
