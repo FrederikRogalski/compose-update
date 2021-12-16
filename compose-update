@@ -24,8 +24,11 @@ compose_names = {"compose.yaml",
                  "docker-compose.yml"}
 
 OKGREEN = '\033[92m'
+WARNORANGE = '\033[93m'
 ENDC = '\033[0m'
 color = lambda x: f"{OKGREEN}{x}{ENDC}" 
+warning = lambda x: f"{WARNORANGE}{x}{ENDC}" 
+
 
 def get_stdin():
     stdin = ""
@@ -85,7 +88,7 @@ def update_composes(update_dirs, prune=False):
             compose_paths.append(get_compose_path(update_dir))
             new_update_dirs_set.append(update_dir)
         except FileNotFoundError:
-            print(f"Directory '{update_dir}' doesn't contain a compose file")
+            print(warning(f"Directory '{update_dir}' doesn't contain a compose file"))
 
     print(color("\nPulling images"))
     results = pool.map(pull_images, compose_paths)
