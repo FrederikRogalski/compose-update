@@ -64,9 +64,9 @@ class FilesDefaultToStdin(click.Argument):
         return super().process_value(ctx, value or get_stdin())
 
 @click.command()
-@click.option('--prune/--no-prune', default=False, help="Prune docker images after update process if set")
+@click.option('--prune', '-p', default=False, help="Prune docker images after update process if set")
 @click.argument('update_dirs', cls=FilesDefaultToStdin)
-def update_composes(update_dirs, prune=False):
+def update_composes(update_dirs, prune):
     """
     Update docker-compose images automaticly. 
     

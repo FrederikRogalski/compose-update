@@ -19,7 +19,7 @@ Usage: compose-update [OPTIONS] [UPDATE_DIRS]...
   "docker-compose.yml"
 
 Options:
-  --prune / --no-prune  Prune docker images after update
+  --prune, -p           Prune docker images after update
                         process if set
   --help                Show this message and exit.
 ```
