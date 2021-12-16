@@ -24,6 +24,13 @@ Options:
   --help                Show this message and exit.
 ```
 
+By default the script gets run by the python interpreter located in `usr/bin/python3`.
+
+If you want to run the script with a different python interpreter you can just call it as you would normaly with the interpreter.
+```
+python3 compose-update
+```
+
 ## Installation
 ```
 git clone https://github.com/FrederikRogalski/compose-update.git
@@ -32,3 +39,6 @@ chmod +x update-compose
 ```
 
 Then add the file 'update-compose' to your path.
+
+## Known issues
+At the moment the script has a problem with reading from stdin. Please supply your arguments after the command until this is fixed.
