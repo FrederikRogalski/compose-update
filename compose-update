@@ -89,6 +89,8 @@ def update_composes(update_dirs, prune=False):
             new_update_dirs_set.append(update_dir)
         except FileNotFoundError:
             print(warning(f"Directory '{update_dir}' doesn't contain a compose file"))
+        except NotADirectoryError:
+            print(warning(f"'{update_dir}' is a file"))
 
     print(color("\nPulling images"))
     results = pool.map(pull_images, compose_paths)
