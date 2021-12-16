@@ -8,6 +8,7 @@ If multiple docker-compose directories are supplied, the script updates them in 
 
 
 ## Usage
+command: `compose-update *` for update all sub directory
 ```
 Usage: compose-update [OPTIONS] [UPDATE_DIRS]...
 
@@ -15,8 +16,8 @@ Usage: compose-update [OPTIONS] [UPDATE_DIRS]...
 
   Takes one or more directorys as input and searches for a
   compose file in one of the following forms:
-  "compose.yaml", "compose.yml", "docker-compose.yaml",
-  "docker-compose.yml"
+  "compose.yaml", "compose.yml",
+  "docker-compose.yaml", "docker-compose.yml"
 
 Options:
   --prune, -p           Prune docker images after update
@@ -35,7 +36,8 @@ python3 compose-update
 ```
 git clone https://github.com/FrederikRogalski/compose-update.git
 cd compose-update
-chmod +x update-compose
+pip3 install -r requirements.txt
+chmod +x compose-update
 ```
 
 Then add the file 'update-compose' to your path.
