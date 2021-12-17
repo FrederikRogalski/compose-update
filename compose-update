@@ -79,7 +79,6 @@ def update_composes(update_dirs, prune):
     update_dirs_set = set(update_dirs)
     pool = mp.Pool(mp.cpu_count())
     
-    print(f"Starting update process on '{len(update_dirs_set)}' compose stacks")
     print(color("\nChecking directory paths and searching for compose files."))
     compose_paths = []
     new_update_dirs_set = []
@@ -91,6 +90,7 @@ def update_composes(update_dirs, prune):
             print(warning(f"Directory '{update_dir}' doesn't contain a compose file"))
         except NotADirectoryError:
             print(warning(f"'{update_dir}' is a file"))
+    print(f"Starting update process on '{len(new_update_dirs_set)}' compose stacks")
 
     print(color("\nPulling images"))
     results = pool.map(pull_images, compose_paths)
