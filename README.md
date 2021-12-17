@@ -4,6 +4,7 @@ This python script updates the images of one or many docker-compose stacks autom
 If multiple docker-compose directories are supplied, the script updates them in parallel.
 
 ## Demo
+*This DEMO is outdated. Use compose-update * to update all subdirectories*
 ![output](https://user-images.githubusercontent.com/31591562/133811801-16eb581f-f63c-454f-a5de-e872568f3477.gif)
 
 
