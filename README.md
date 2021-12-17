@@ -1,4 +1,6 @@
 # **compose-update** a docker-compose-image-updater
+![Test](https://github.com/frederikrogalski/compose-update/actions/workflows/test-workflow.yml/badge.svg)
+
 This python script updates the images of one or many docker-compose stacks automatically.
 
 If multiple docker-compose directories are supplied, the script updates them in parallel.
