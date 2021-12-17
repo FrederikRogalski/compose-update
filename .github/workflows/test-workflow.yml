@@ -33,9 +33,10 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Setup compose file
       run: |
+        mkdir hello-world
         echo 'services:
           app:
-            image: hello-world' >> compose.yml
+            image: hello-world' >> hello-world/compose.yml
     - name: Run compose-update
       run: |
         python ./compose-update *
