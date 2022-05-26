@@ -68,9 +68,9 @@ class FilesDefaultToStdin(click.Argument):
 @click.argument('update_dirs', cls=FilesDefaultToStdin)
 def update_composes(update_dirs, prune):
     """
-    Update docker-compose images automaticly. 
+    Update docker-compose images automatically. 
     
-    Takes one or more directorys as input and searches for a compose file in one of the following forms:
+    Takes one or more directories as input and searches for a compose file in one of the following forms:
     "compose.yaml",
     "compose.yml",
     "docker-compose.yaml",
