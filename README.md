@@ -17,7 +17,7 @@ Usage: compose-update [OPTIONS] [UPDATE_DIRS]...
 
   Update docker-compose images automatically.
 
-  Takes one or more directorys as input and searches for a
+  Takes one or more directories as input and searches for a
   compose file in one of the following forms:
   "compose.yaml", "compose.yml",
   "docker-compose.yaml", "docker-compose.yml"
