@@ -43,7 +43,7 @@ pip3 install -r requirements.txt
 chmod +x compose-update
 ```
 
-Then add the file 'update-compose' to your path.
+Then add the file 'compose-update' to your path.
 
 ## Known issues
 At the moment the script has a problem with reading from stdin. Please supply your arguments after the command until this is fixed.
